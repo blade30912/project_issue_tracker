@@ -14,8 +14,9 @@ $d = $con->prepare('delete from Token where expiry < ?');
 
 $d->execute([TIME]);
 
-# Clear THIRTY_DAYS old recycled documents
 $con->beginTransaction();
+
+# Clear THIRTY_DAYS old recycled documents
 
 $g = $con->prepare('select path from Attachments where recycle = 1 and recycle_time < ?');
 $d = $con->prepare('delete from Attachments where recycle = 1 and recycle_time < ?');
@@ -37,3 +38,8 @@ try {
 # Should be able to commit 'nothing' should rollback fail
 $con->commit();
 
+# Clear THIRTY_DAYS old recycled issues
+
+$i = $con->prepare('delete from Issues where recycle = 1 and recycle_time < ?');
+
+$i->execute([TIME-THIRTY_DAYS]);
